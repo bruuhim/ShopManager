@@ -3,10 +3,118 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>ShopManager</title>
+
     <script src="js/main.js" defer></script>
-    <script src="https://tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cloudflare.com" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/output.css">
   </head>
-  <body></body>
+
+  <body class="bg-[#242321] text-[#F5F2ED]">
+    <header
+      id="header"
+      class="flex justify-between items-center px-16 py-8 bg-[#1B1A19]"
+    >
+      <div id="brand" class="flex items-center gap-3">
+        <span
+          id="brand-icon"
+          class="flex justify-center items-center text-[#242321] font-bold text-lg bg-[#C6AD88] border-[#C6AD88] border-8 rounded-lg w-9 h-9"
+          >S</span
+        >
+        <span class="font-bold text-xl">ShopManager</span>
+      </div>
+
+      <nav id="navigation">
+        <a href="#" class="text-[#C6AD88] font-medium text-lg">Products</a>
+      </nav>
+    </header>
+
+    <main id="main" class="flex flex-col gap-10 px-16 py-8">
+      <!-- Catalogue Header -->
+      <section
+        id="catalogue-header"
+        class="flex justify-between items-center pb-6"
+      >
+        <div class="flex flex-col gap-2">
+          <h1 class="font-bold text-4xl">Products</h1>
+          <p class="text-[#8C857D]">Curated selection of everyday essentials</p>
+        </div>
+
+        <span
+          id="product-count"
+          class="text-[#C6AD88] font-semibold text-sm bg-[#302E2A] px-3 py-2 rounded-full"
+        >
+          0 products
+        </span>
+      </section>
+
+      <!-- Filters -->
+      <section id="filters" class="flex gap-3 items-center pb-6">
+        <input
+          type="search"
+          id="search-input"
+          placeholder="Search products..."
+          aria-label="Search products"
+          class="bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-80 h-11 outline-none focus:border-[#C6AD88] placeholder:text-[#8C857D]"
+        />
+
+        <select
+          id="category-filter"
+          aria-label="Filter by category"
+          class="w-44 h-11 px-3.5 bg-[#302E2A] text-[#F5F2ED] rounded-xl border border-[#3A3834] cursor-pointer focus:outline-none focus:border-[#C6AD88]"
+        >
+          <option value="">All categories</option>
+          <option value="Books">Books</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Kitchen">Kitchen</option>
+          <option value="Outdoor">Outdoor</option>
+        </select>
+
+        <input
+          type="number"
+          id="max-price"
+          placeholder="Max price"
+          min="0"
+          aria-label="Maximum price"
+          class="bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-40 h-11 outline-none focus:border-[#C6AD88] placeholder:text-[#8C857D]"
+        />
+
+        <label
+          for="in-stock-filter"
+          class="cursor-pointer flex items-center gap-3 bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-32 h-11 font-medium"
+        >
+          <input type="checkbox" id="in-stock-filter" class="sr-only peer" />
+
+          <span
+            class="relative w-9 h-5 bg-[#514C44] rounded-full transition-colors peer-checked:bg-[#C6AD88] after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-4"
+          ></span>
+
+          <span>In stock</span>
+        </label>
+
+        <button
+          type="button"
+          id="reset-filters"
+          class="flex justify-center items-center text-[#C6AD88] font-semibold bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-36 h-11 hover:bg-[#3A3834] transition-colors cursor-pointer"
+        >
+          ↻ Reset filters
+        </button>
+      </section>
+
+      <!-- Products Grid -->
+      <section id="products-container" class="grid grid-cols-3 gap-6"></section>
+
+      <!-- Empty State -->
+      <p id="empty-message" class="hidden text-center text-[#8C857D] py-16">
+        No products found.
+      </p>
+    </main>
+  </body>
 </html>
