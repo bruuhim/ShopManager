@@ -1,4 +1,5 @@
 const API = "http://localhost:3000";
+const productsList = document.getElementById("products-container");
 
 async function loadProducts() {
   try {
@@ -17,7 +18,6 @@ async function loadProducts() {
 }
 
 function displayProducts(products) {
-  const productsList = document.getElementById("products-container");
   const productCount = document.getElementById("product-count");
 
   productCount.textContent = `${products.length} products`;
@@ -61,4 +61,26 @@ function displayProducts(products) {
   });
 }
 
+function searchProducts() {
+  const searchInput = document.getElementById("search-input");
+
+  searchInput.addEventListener("input", async () => {
+    try {
+      let searchInputValue = searchInput.value.trim().toLowerCase();
+      productsList.innerHTML = "";
+
+      const searchResponse = await fetch(
+        API + "/api/products?search=" + searchInputValue,
+      );
+
+      let filteredProducts = await searchResponse.json();
+
+      displayProducts(filteredProducts);
+    } catch (error) {
+      console.error(error.message);
+    }
+  });
+}
+
 loadProducts();
+searchProducts();
