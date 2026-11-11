@@ -9,7 +9,7 @@ async function loadProducts() {
     }
 
     const products = await response.json();
-    console.log(products);
+
     displayProducts(products);
   } catch (error) {
     console.error(error.message);
@@ -75,12 +75,42 @@ function searchProducts() {
 
       let filteredProducts = await searchResponse.json();
 
-      displayProducts(filteredProducts);
+      if (filteredProducts.length === 0) {
+        document.getElementById("empty-message").classList.remove("hidden");
+      } else {
+        displayProducts(filteredProducts);
+      }
     } catch (error) {
       console.error(error.message);
     }
   });
 }
 
+function filterProducts() {
+  const categoryFilter = document.getElementById("category-filter");
+
+  categoryFilter.addEventListener("change", async () => {
+    if (categoryFilter.value === "") {
+      productsList.innerHTML = "";
+      loadProducts();
+    } else {
+      try {
+        productsList.innerHTML = "";
+
+        const categoryResponse = await fetch(
+          API + "/api/products?categoryId=" + categoryFilter.value,
+        );
+
+        let categoryfiltred = await categoryResponse.json();
+
+        displayProducts(categoryfiltred);
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+  });
+}
+
 loadProducts();
 searchProducts();
+filterProducts();

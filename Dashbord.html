@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./css/output.css">
+    <link rel="stylesheet" href="./css/output.css" />
   </head>
 
   <body class="bg-[#242321] text-[#F5F2ED]">
@@ -71,10 +71,10 @@
           class="w-44 h-11 px-3.5 bg-[#302E2A] text-[#F5F2ED] rounded-xl border border-[#3A3834] cursor-pointer focus:outline-none focus:border-[#C6AD88]"
         >
           <option value="">All categories</option>
-          <option value="Books">Books</option>
-          <option value="Electronics">Electronics</option>
-          <option value="Kitchen">Kitchen</option>
-          <option value="Outdoor">Outdoor</option>
+          <option value="1">Books</option>
+          <option value="2">Electronics</option>
+          <option value="3">Kitchen</option>
+          <option value="4">Outdoor</option>
         </select>
 
         <input
@@ -88,12 +88,12 @@
 
         <label
           for="in-stock-filter"
-          class="cursor-pointer flex items-center gap-3 bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-32 h-11 font-medium"
+          class="cursor-pointer flex items-center gap-3 bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-fit h-11 font-medium whitespace-nowrap"
         >
           <input type="checkbox" id="in-stock-filter" class="sr-only peer" />
 
           <span
-            class="relative w-9 h-5 bg-[#514C44] rounded-full transition-colors peer-checked:bg-[#C6AD88] after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-4"
+            class="relative w-9 h-5 shrink-0 bg-[#514C44] rounded-full transition-colors peer-checked:bg-[#C6AD88] after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-4"
           ></span>
 
           <span>In stock</span>
@@ -102,7 +102,7 @@
         <button
           type="button"
           id="reset-filters"
-          class="flex justify-center items-center text-[#C6AD88] font-semibold bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-36 h-11 hover:bg-[#3A3834] transition-colors cursor-pointer"
+          class="flex justify-center items-center text-[#C6AD88] font-semibold bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-fit h-11 hover:bg-[#3A3834] transition-colors cursor-pointer whitespace-nowrap"
         >
           ↻ Reset filters
         </button>
