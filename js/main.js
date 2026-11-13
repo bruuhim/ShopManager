@@ -1,5 +1,10 @@
 const API = "http://localhost:3000";
 const productsList = document.getElementById("products-container");
+const searchInput = document.getElementById("search-input");
+const categoryFilter = document.getElementById("category-filter");
+const maxPrice = document.getElementById("max-price");
+const inStockFilter = document.getElementById("in-stock-filter");
+const resetFilters = document.getElementById("reset-filters");
 
 async function loadProducts() {
   try {
@@ -13,14 +18,39 @@ async function loadProducts() {
     displayProducts(products);
   } catch (error) {
     console.error(error.message);
-    document.getElementById("empty-message").classList.remove("hidden");
   }
+}
+
+async function loadCategories() {
+  try {
+    const response = await fetch(API + "/api/categories");
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const categories = await response.json();
+
+    displayCategories(categories)
+  } catch {
+    console.error(error.message);
+  }
+}
+
+function displayCategories(categories) {
+  categories.forEach(category => {
+    categoryFilter.innerHTML += `<option value="${category.id}">${category.name}</option>`
+  });
 }
 
 function displayProducts(products) {
   const productCount = document.getElementById("product-count");
+  const emptyMessage = document.getElementById("empty-message");
+
+  emptyMessage.classList.toggle("hidden", products.length > 0);
 
   productCount.textContent = `${products.length} products`;
+
+  productsList.innerHTML = "";
 
   products.forEach((product) => {
     productsList.innerHTML += `        <article
@@ -61,56 +91,66 @@ function displayProducts(products) {
   });
 }
 
-function searchProducts() {
-  const searchInput = document.getElementById("search-input");
-
-  searchInput.addEventListener("input", async () => {
-    try {
-      let searchInputValue = searchInput.value.trim().toLowerCase();
-      productsList.innerHTML = "";
-
-      const searchResponse = await fetch(
-        API + "/api/products?search=" + searchInputValue,
-      );
-
-      let filteredProducts = await searchResponse.json();
-
-      if (filteredProducts.length === 0) {
-        document.getElementById("empty-message").classList.remove("hidden");
-      } else {
-        displayProducts(filteredProducts);
-      }
-    } catch (error) {
-      console.error(error.message);
-    }
-  });
-}
-
 function filterProducts() {
-  const categoryFilter = document.getElementById("category-filter");
-
-  categoryFilter.addEventListener("change", async () => {
-    if (categoryFilter.value === "") {
-      productsList.innerHTML = "";
-      loadProducts();
-    } else {
-      try {
-        productsList.innerHTML = "";
-
-        const categoryResponse = await fetch(
-          API + "/api/products?categoryId=" + categoryFilter.value,
-        );
-
-        let categoryfiltred = await categoryResponse.json();
-
-        displayProducts(categoryfiltred);
-      } catch (error) {
-        console.error(error.message);
-      }
-    }
+  searchInput.addEventListener("input", fetchFilters);
+  categoryFilter.addEventListener("change", fetchFilters);
+  maxPrice.addEventListener("input", fetchFilters);
+  inStockFilter.addEventListener("change", fetchFilters);
+  resetFilters.addEventListener("click", () => {
+    searchInput.value = "";
+    categoryFilter.value = "";
+    maxPrice.value = "";
+    inStockFilter.checked = false;
+    fetchFilters();
   });
 }
 
-loadProducts();
-searchProducts();
+async function fetchFilters() {
+  const params = new URLSearchParams();
+
+  const searchValue = searchInput.value.trim();
+  const categoryValue = categoryFilter.value;
+  const priceValue = maxPrice.value;
+  const stockChecked = inStockFilter.checked;
+
+  try {
+    if (searchValue !== "") {
+      params.append("search", searchValue);
+    }
+
+    if (categoryValue !== "") {
+      params.append("categoryId", categoryValue);
+    }
+
+    if (priceValue !== "") {
+      params.append("maxPrice", priceValue);
+    }
+
+    if (stockChecked) {
+      params.append("inStock", "true");
+    }
+
+    const urlstring = params.toString();
+
+    if (urlstring !== "") {
+      const urlresponse = await fetch(API + "/api/products?" + urlstring);
+
+      if (!urlresponse.ok) {
+        throw new Error("Something went wrong");
+      }
+
+      const urljson = await urlresponse.json();
+
+      displayProducts(urljson);
+    } else {
+      loadProducts();
+    }
+  } catch (error) {
+    console.error(error.message);
+    document.getElementById("empty-message").classList.remove("hidden");
+  }
+}
+
 filterProducts();
+fetchFilters();
+loadCategories()
