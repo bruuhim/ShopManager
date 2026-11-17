@@ -31,8 +31,23 @@
         <span class="font-bold text-xl">ShopManager</span>
       </div>
 
-      <nav id="navigation">
-        <a href="#" class="text-[#C6AD88] font-medium text-lg">Products</a>
+      <nav id="navigation" class="flex items-center gap-8">
+        <a
+          href="#"
+          class="font-medium text-[#E2D6C4] hover:text-[#C6AD88] focus:text-[#C6AD88] focus:text-lg transition-all"
+          >Products</a
+        >
+        <a
+          href="#"
+          class="font-medium text-[#E2D6C4] hover:text-[#C6AD88] focus:text-[#C6AD88] focus:text-lg transition-all"
+          >Reservations</a
+        >
+        <a
+          href="#"
+          id="open-cart"
+          class="font-medium text-[#E2D6C4] hover:text-[#C6AD88] focus:text-[#C6AD88] focus:text-lg transition-all"
+          >Cart</a
+        >
       </nav>
     </header>
 
@@ -56,19 +71,22 @@
       </section>
 
       <!-- Filters -->
-      <section id="filters" class="flex gap-3 items-center pb-6">
+      <section
+        id="filters"
+        class="flex gap-2 items-center pb-6 w-full max-w-full min-w-0"
+      >
         <input
           type="search"
           id="search-input"
           placeholder="Search products..."
           aria-label="Search products"
-          class="bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-80 h-11 outline-none focus:border-[#C6AD88] placeholder:text-[#8C857D]"
+          class="w-80 max-w-full min-w-0 shrink bg-[#302E2A] px-3.5 h-11 rounded-xl border border-[#3A3834] outline-none focus:border-[#C6AD88] placeholder:text-[#8C857D]"
         />
 
         <select
           id="category-filter"
           aria-label="Filter by category"
-          class="w-44 h-11 px-3.5 bg-[#302E2A] text-[#F5F2ED] rounded-xl border border-[#3A3834] cursor-pointer focus:outline-none focus:border-[#C6AD88]"
+          class="w-44 min-w-0 h-11 px-3.5 bg-[#302E2A] text-[#F5F2ED] rounded-xl border border-[#3A3834] cursor-pointer focus:outline-none focus:border-[#C6AD88]"
         >
           <option value="">All categories</option>
         </select>
@@ -79,12 +97,12 @@
           placeholder="Max price"
           min="0"
           aria-label="Maximum price"
-          class="bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-40 h-11 outline-none focus:border-[#C6AD88] placeholder:text-[#8C857D]"
+          class="bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-40 min-w-0 h-11 outline-none focus:border-[#C6AD88] placeholder:text-[#8C857D]"
         />
 
         <label
           for="in-stock-filter"
-          class="cursor-pointer flex items-center gap-3 bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-fit h-11 font-medium whitespace-nowrap"
+          class="cursor-pointer flex items-center gap-3 bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-fit h-11 font-medium whitespace-nowrap shrink-0"
         >
           <input type="checkbox" id="in-stock-filter" class="sr-only peer" />
 
@@ -98,7 +116,7 @@
         <button
           type="button"
           id="reset-filters"
-          class="flex justify-center items-center text-[#C6AD88] font-semibold bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-fit h-11 hover:bg-[#3A3834] transition-colors cursor-pointer whitespace-nowrap"
+          class="flex justify-center items-center text-[#C6AD88] font-semibold bg-[#302E2A] px-3.5 rounded-xl border border-[#3A3834] w-fit h-11 hover:bg-[#3A3834] transition-colors cursor-pointer whitespace-nowrap shrink-0"
         >
           ↻ Reset filters
         </button>
@@ -106,6 +124,175 @@
 
       <!-- Products Grid -->
       <section id="products-container" class="grid grid-cols-3 gap-6"></section>
+
+      <dialog
+        id="cart-dialog"
+        aria-labelledby="cart-title"
+        class="m-auto w-[min(1000px,92vw)] max-w-none max-h-[90vh] overflow-y-auto overflow-x-hidden bg-[#302E2A] text-[#F5F2ED] rounded-2xl border border-[#49443C] p-6 backdrop:bg-black/70"
+      >
+        <!-- Header -->
+        <header
+          class="flex justify-between items-start border-b border-[#49443C] pb-5"
+        >
+          <div>
+            <h2 id="cart-title" class="font-bold text-2xl">Your basket</h2>
+            <p class="text-sm text-[#A39B91] mt-2">
+              Review your items, enter your details, then reserve each product.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            id="close-cart"
+            aria-label="Close cart"
+            class="text-[#A39B91] hover:text-white text-xl cursor-pointer"
+          >
+            ✕
+          </button>
+        </header>
+
+        <!-- Main content -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 py-6">
+          <!-- Basket -->
+          <section
+            id="basket-section"
+            class="min-w-0 lg:pr-6 lg:border-r border-[#49443C]"
+          >
+            <div class="flex justify-between items-center mb-5">
+              <div class="flex items-center gap-3">
+                <h3 class="font-bold text-lg">Basket</h3>
+                <span id="cart-product-count" class="text-xs text-[#A39B91]">
+                  0 products
+                </span>
+              </div>
+
+              <button
+                type="button"
+                id="clear-cart"
+                class="text-xs text-[#D58C78] hover:text-[#E8A28E] cursor-pointer"
+              >
+                Clear basket
+              </button>
+            </div>
+
+            <!-- Cart items -->
+            <div id="cart-items" class="flex flex-col gap-3"></div>
+
+            <!-- Empty message -->
+            <p
+              id="cart-empty-message"
+              class="text-sm text-[#A39B91] text-center py-10"
+            >
+              Your basket is empty.
+            </p>
+          </section>
+
+          <!-- Customer form -->
+          <section id="reservation-details" class="min-w-0">
+            <h3 class="font-bold text-lg mb-5">Reservation details</h3>
+
+            <form id="reserve-cart-form" class="flex flex-col gap-4">
+              <div class="flex flex-col gap-2">
+                <label
+                  for="customer-name"
+                  class="text-xs text-[#A39B91] font-semibold"
+                >
+                  Full name *
+                </label>
+                <input
+                  type="text"
+                  id="customer-name"
+                  name="name"
+                  placeholder="Your name"
+                  autocomplete="name"
+                  required
+                  class="w-full h-11 px-3.5 bg-[#272622] border border-[#49443C] rounded-lg outline-none focus:border-[#C6AD88]"
+                />
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <label
+                  for="customer-email"
+                  class="text-xs text-[#A39B91] font-semibold"
+                >
+                  Email address *
+                </label>
+                <input
+                  type="email"
+                  id="customer-email"
+                  name="email"
+                  placeholder="name@example.com"
+                  autocomplete="email"
+                  required
+                  class="w-full h-11 px-3.5 bg-[#272622] border border-[#49443C] rounded-lg outline-none focus:border-[#C6AD88]"
+                />
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <label
+                  for="customer-address"
+                  class="text-xs text-[#A39B91] font-semibold"
+                >
+                  Address *
+                </label>
+                <input
+                  type="text"
+                  id="customer-address"
+                  name="address"
+                  placeholder="Street and number"
+                  autocomplete="street-address"
+                  required
+                  class="w-full h-11 px-3.5 bg-[#272622] border border-[#49443C] rounded-lg outline-none focus:border-[#C6AD88]"
+                />
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <label
+                  for="customer-city"
+                  class="text-xs text-[#A39B91] font-semibold"
+                >
+                  City *
+                </label>
+                <input
+                  type="text"
+                  id="customer-city"
+                  name="city"
+                  placeholder="Your city"
+                  autocomplete="address-level2"
+                  required
+                  class="w-full h-11 px-3.5 bg-[#272622] border border-[#49443C] rounded-lg outline-none focus:border-[#C6AD88]"
+                />
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <!-- Footer -->
+        <footer
+          class="w-full border-t border-[#49443C] pt-5 flex flex-row justify-between items-center gap-5"
+        >
+          <div>
+            <span id="cart-item-count" class="text-xs text-[#A39B91]">
+              0 items
+            </span>
+            <div class="flex items-center gap-3 mt-1">
+              <span class="font-semibold">Basket total</span>
+              <span id="cart-total" class="text-[#C6AD88] font-bold text-2xl">
+                0.00
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            form="reserve-cart-form"
+            id="reserve-cart"
+            class="shrink-0 bg-[#C6AD88] text-[#26231F] font-bold px-7 py-3 rounded-xl hover:bg-[#D5BE9D] transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Reserve cart contents
+          </button>
+        </footer>
+      </dialog>
 
       <!-- Empty State -->
       <p id="empty-message" class="hidden text-center text-[#8C857D] py-16">
