@@ -11,7 +11,6 @@ const openCart = document.getElementById("open-cart");
 const closeCart = document.getElementById("close-cart");
 const cartItems = document.getElementById("cart-items");
 const cartEmptyMessage = document.getElementById("cart-empty-message");
-const cartItemTemplate = document.getElementById("cart-item-template");
 let cart = readCartFromLS();
 
 openCart.addEventListener("click", (event) => {
@@ -174,82 +173,90 @@ async function fetchFilters() {
 
 function addToCart(id) {
   const clickedProduct = products.find((product) => product.id === id);
-  saveclickedProductToLS();
 
-  // cartEmptyMessage.classList.toggle("hidden", cartItems.length > 0);
+  if (!clickedProduct) {
+    return;
+  }
 
-  cartItems.innerHTML += `<div data-id="${clickedProduct.id}">
-          <article
-            class="cart-item flex gap-4 bg-[#272622] border border-[#49443C] rounded-xl p-3"
-            data-product-id="${clickedProduct.id}"
-          >
-            <img
-              data-cart-image
-              src="${API}${clickedProduct.image}"
-              class="w-20 h-24 object-contain bg-[#302E2A] rounded-lg shrink-0"
-            />
+  const existingItem = cart.find((item) => item.productId === id);
 
-            <div class="flex flex-1 justify-between gap-3 min-w-0">
-              <div class="flex flex-col gap-1 min-w-0">
-                <h4 data-cart-name class="font-bold text-sm">${clickedProduct.name}</h4>
-                <p data-cart-description class="text-xs text-[#A39B91]">${clickedProduct.description}</p>
+  if (existingItem) {
+    if (existingItem.quantity < clickedProduct.stock) {
+      existingItem.quantity++;
+    } else {
+      alert("You cannot add more than the available stock.");
+      return;
+    }
+  } else {
+    if (clickedProduct.stock <= 0) {
+      alert("This product is out of stock.");
+      return;
+    }
 
-                <span class="text-xs text-[#A39B91] mt-2">Unit price</span>
-                <span
-                  data-cart-price
-                  class="text-[#C6AD88] font-bold text-sm"
-                >${clickedProduct.price}</span>
-              </div>
+    cart.push({
+      productId: clickedProduct.id,
+      name: clickedProduct.name,
+      description: clickedProduct.description,
+      image: clickedProduct.image,
+      unitPrice: Number(clickedProduct.price),
+      quantity: 1,
+      stock: clickedProduct.stock,
+    });
+  }
 
-              <div class="flex flex-col justify-between items-end">
-                <div
-                  class="flex items-center gap-3 bg-[#3B3730] rounded-lg px-2 py-1"
-                >
-                  <button
-                    type="button"
-                    data-action="decrease"
-                    aria-label="Decrease quantity"
-                  >
-                    −
-                  </button>
+  saveCartToLS();
+renderCart();
+}
 
-                  <span data-cart-quantity class="text-sm font-bold">1</span>
+function renderCart() {
+  cartItems.innerHTML = "";
 
-                  <button
-                    type="button"
-                    data-action="increase"
-                    aria-label="Increase quantity"
-                    class="text-[#C6AD88]"
-                  >
-                    +
-                  </button>
-                </div>
+  cart.forEach((item) => {
+    cartItems.innerHTML += `
+      <article
+        class="cart-item flex gap-4 bg-[#272622] border border-[#49443C] rounded-xl p-3"
+      >
+        <img
+          src="${API}${item.image}"
+          class="w-20 h-24 object-contain rounded-lg"
+        />
 
-                <div class="text-right">
-                  <span data-cart-subtotal class="text-sm font-bold">${clickedProduct.price}</span>
+        <div class="flex flex-1 justify-between">
+          <div>
+            <h4 class="font-bold text-sm">${item.name}</h4>
+            <p class="text-xs text-[#A39B91]">${item.description}</p>
+            <p class="text-[#C6AD88]">${item.unitPrice}</p>
+          </div>
 
-                  <button
-                    type="button"
-                    data-action="remove"
-                    class="block text-xs text-[#D58C78] mt-2 cursor-pointer"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>`;
+          <div class="flex flex-col justify-between items-end">
+            <span>Quantity: ${item.quantity}</span>
+            <span>
+              Subtotal: ${item.unitPrice * item.quantity}
+            </span>
+          </div>
+        </div>
+      </article>
+    `;
+  });
+
+  cartEmptyMessage.classList.toggle("hidden", cart.length > 0);
 }
 
 function readCartFromLS() {
-  return JSON.parse(localStorage.getItem("clickedProduct")) || [];
+  const savedCart = localStorage.getItem("cart");
+
+  if (savedCart === null) {
+    return [];
+  }
+
+  return JSON.parse(savedCart);
 }
 
-function saveclickedProductToLS() {
-  localStorage.setItem("clickedProduct", JSON.stringify(clickedProduct));
+function saveCartToLS() {
+  localStorage.setItem("cart", JSON.stringify(cart));
 }
 
 filterProducts();
 fetchFilters();
 loadCategories();
+renderCart();
