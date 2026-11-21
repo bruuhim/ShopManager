@@ -1,5 +1,4 @@
 const API = "http://localhost:3000";
-let products = [];
 const productsList = document.getElementById("products-container");
 const searchInput = document.getElementById("search-input");
 const categoryFilter = document.getElementById("category-filter");
@@ -11,6 +10,11 @@ const openCart = document.getElementById("open-cart");
 const closeCart = document.getElementById("close-cart");
 const cartItems = document.getElementById("cart-items");
 const cartEmptyMessage = document.getElementById("cart-empty-message");
+const cartProductCount = document.getElementById("cart-product-count");
+const cartItemCount = document.getElementById("cart-item-count");
+const cartTotal = document.getElementById("cart-total");
+const clearCart = document.getElementById("clear-cart");
+let products = [];
 let cart = readCartFromLS();
 
 openCart.addEventListener("click", (event) => {
@@ -20,6 +24,12 @@ openCart.addEventListener("click", (event) => {
 
 closeCart.addEventListener("click", () => {
   cartDialog.close();
+});
+
+clearCart.addEventListener("click", () => {
+  cart = [];
+  saveCartToLS();
+  renderCart();
 });
 
 async function loadProducts() {
@@ -184,12 +194,30 @@ function addToCart(id) {
     if (existingItem.quantity < clickedProduct.stock) {
       existingItem.quantity++;
     } else {
-      alert("You cannot add more than the available stock.");
+      NotifyX.error("", {
+        duration: 4000,
+        dismissible: true,
+        position: "top-right",
+        theme: "glass",
+        animation: "spring",
+        priority: "normal",
+        title: "You cannot add more than the available stock.",
+        showIcon: true,
+      });
       return;
     }
   } else {
     if (clickedProduct.stock <= 0) {
-      alert("This product is out of stock.");
+      NotifyX.error("", {
+        duration: 4000,
+        dismissible: true,
+        position: "top-right",
+        theme: "glass",
+        animation: "spring",
+        priority: "normal",
+        title: "This product is out of stock.",
+        showIcon: true,
+      });
       return;
     }
 
@@ -205,7 +233,7 @@ function addToCart(id) {
   }
 
   saveCartToLS();
-renderCart();
+  renderCart();
 }
 
 function renderCart() {
@@ -231,7 +259,7 @@ function renderCart() {
           <div class="flex flex-col justify-between items-end">
             <span>Quantity: ${item.quantity}</span>
             <span>
-              Subtotal: ${item.unitPrice * item.quantity}
+              Subtotal: ${(item.unitPrice * item.quantity).toFixed(2)}
             </span>
           </div>
         </div>
@@ -240,6 +268,16 @@ function renderCart() {
   });
 
   cartEmptyMessage.classList.toggle("hidden", cart.length > 0);
+  cartProductCount.textContent = `${cart.length} products`;
+
+  let totalItems = 0;
+  let totalPrice = 0;
+  cart.forEach((item) => {
+    totalItems += item.quantity;
+    totalPrice += item.unitPrice * item.quantity;
+  });
+  cartItemCount.textContent = `${totalItems} items`;
+  cartTotal.textContent = totalPrice.toFixed(2);
 }
 
 function readCartFromLS() {
